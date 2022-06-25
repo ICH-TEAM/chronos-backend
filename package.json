@@ -21,6 +21,8 @@
     "express-pino-logger": "^7.0.0",
     "http-errors": "^2.0.0",
     "mongoose": "^6.3.3",
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
     "pino-pretty": "^7.6.1",
     "swagger-ui-express": "^4.4.0"
   },
