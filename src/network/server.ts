@@ -1,6 +1,8 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import cors from 'cors'
+import passport from 'passport'
+import './config/passport'
 import pino, { HttpLogger } from 'express-pino-logger'
 
 import { applyRoutes } from './router'
@@ -29,6 +31,7 @@ class Server {
     this.#app.use(cors())
     this.#app.use(express.json())
     this.#app.use(express.urlencoded({ extended: false }))
+    this.#app.use(passport.initialize());
     this.#app.use(
       (
         req: express.Request,
