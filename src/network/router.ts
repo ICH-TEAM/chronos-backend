@@ -3,12 +3,13 @@ import swaggerUi from 'swagger-ui-express'
 import httpErrors from 'http-errors'
 
 import { response } from './response'
-import { Home, User,Course } from './routes'
+import { Home, User,Course, Auth } from './routes'
 import { docs } from 'utils'
 
 const routers = [User,Course]
 const applyRoutes = (app: Application): void => {
   app.use('/', Home)
+  app.use('/auth', Auth)
   app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(docs))
   routers.forEach((router: Router): Application => app.use('/api', router))
 
