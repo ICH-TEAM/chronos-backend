@@ -43,4 +43,25 @@ Course.route("/course")
     }
   );
 
+Course.route("/course/:id")
+.get(
+  validatorCompiler(idSchema,'params'),
+  async(
+    req:CustomRequest,
+    res:CustomResponse,
+    next:NextFunction
+  ):Promise<void>=>{
+    try {
+      const {params:{id}}=req
+      const cs = new CourseService({id})
+      const result = await cs.process({type:'getOne'})
+      response({error:false,message:result,res,status:200})
+
+    } catch (error) {
+      next(error)
+    }
+  }
+)
+
+
   export {Course}

@@ -26,7 +26,8 @@ public process({type}:Process):Promise<string|CourseDTO|CourseDTO[]>{
             return this.#store()
         case 'getAll':
             return this.#getAll()
-    
+        case 'getOne':
+            return this.#getOne()
         default:
             throw new httpErrors.InternalServerError(GE.INTERNAL_SERVER_ERROR)
     }
@@ -51,6 +52,22 @@ async #getAll():Promise<CourseDTO[]>{
         return courses
     }catch(error){
         return errorHandling(error, GE.INTERNAL_SERVER_ERROR)
+    }
+}
+
+async #getOne():Promise<CourseDTO>{
+    try {
+        if(!this.#args.id){
+            throw new httpErrors.UnprocessableEntity(GE.INTERNAL_SERVER_ERROR)
+        }
+        const {id}=this.#args
+        const user = (await getCourse(id)) as CourseDTO | null
+
+        if(!user) throw new httpErrors.NotFound(EFU.NOT_FOUND)
+        return user
+
+    } catch (error) {
+        return errorHandling(error,GE.INTERNAL_SERVER_ERROR)
     }
 }
 
