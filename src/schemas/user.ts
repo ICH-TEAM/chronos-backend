@@ -22,6 +22,9 @@ const userDto = Type.Object({
   name: Type.String(),
   email: Type.String(),
   password: Type.String(),
+  faculty: Type.String(),
+  career: Type.String(),
+  courses: Type.Array(Type.String()),
   createdAt: Type.Optional(Type.String()),
   updatedAt: Type.Optional(Type.String())
 })

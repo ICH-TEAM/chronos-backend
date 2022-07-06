@@ -17,7 +17,22 @@ const UserSchema = new Schema<UserDBO>(
     password: {
       require: true,
       type: String
-    }
+    },
+    faculty: {
+      require: true,
+      type: Schema.Types.ObjectId,
+      ref: "faculty"
+    },
+    career: {
+      require: true,
+      type: Schema.Types.ObjectId,
+      ref: "careers"
+    },
+    courses: [{
+      require: true,
+      type: Schema.Types.ObjectId,
+      ref: "courses"
+    }]
   },
   {
     timestamps: true,
