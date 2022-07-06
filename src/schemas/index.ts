@@ -13,3 +13,5 @@ type IdSchema = Static<typeof idSchema>
 export { id, Id, idSchema, IdSchema }
 export * from './user'
 export * from './course'
+export * from './faculty'
+export * from './career'
