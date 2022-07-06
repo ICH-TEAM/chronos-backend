@@ -8,4 +8,11 @@ enum MessageForUser {
   USER_DELETED = 'The requested user was successfully deleted'
 }
 
-export { ErrorForUser as EFU, MessageForUser as MFU }
+enum UserCredentialsError {
+  CREDENTIALS_NOT_SENT = 'There is no email or password',
+  EMAIL_MISSING = 'There is no email',
+  PASSWORD_MISSING = 'There is no password',
+  WRONG_CREDENTIALS = 'The email or password is wrong'
+}
+
+export { ErrorForUser as EFU, MessageForUser as MFU, UserCredentialsError as UCE }
