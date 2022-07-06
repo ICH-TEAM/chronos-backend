@@ -27,7 +27,11 @@ const getCourse = async (
   return courses.map((c) => courseDBOtoDTO(c));
 };
 
+const getCousesByFaculty = async (
+  facultyID: string
+): Promise<CourseDTO[] | CourseDTO | null> => {
+  const courses = await CourseModel.find({ faculty: facultyID });
+  return courses.map((c) => courseDBOtoDTO(c));
+};
 
-
-
-export {storeCourse,getCourse}
+export { storeCourse, getCourse, getCousesByFaculty };

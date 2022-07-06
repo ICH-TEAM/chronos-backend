@@ -4,7 +4,6 @@ import { CourseService } from "services/course";
 import { idSchema, storeCourseSchema, CourseDTO } from "schemas";
 import { validatorCompiler } from "./utils";
 
-
 const Course = Router();
 
 Course.route("/course")
@@ -34,34 +33,53 @@ Course.route("/course")
       next: NextFunction
     ): Promise<void> => {
       try {
-        const co=new CourseService()
-        const result=await co.process({type:'getAll'})
-        response({error:false,message:result,res,status:200})
+        const co = new CourseService();
+        const result = await co.process({ type: "getAll" });
+        response({ error: false, message: result, res, status: 200 });
       } catch (error) {
-        next(error)
+        next(error);
       }
     }
   );
 
-Course.route("/course/:id")
-.get(
-  validatorCompiler(idSchema,'params'),
-  async(
-    req:CustomRequest,
-    res:CustomResponse,
-    next:NextFunction
-  ):Promise<void>=>{
+Course.route("/course/:id").get(
+  validatorCompiler(idSchema, "params"),
+  async (
+    req: CustomRequest,
+    res: CustomResponse,
+    next: NextFunction
+  ): Promise<void> => {
     try {
-      const {params:{id}}=req
-      const cs = new CourseService({id})
-      const result = await cs.process({type:'getOne'})
-      response({error:false,message:result,res,status:200})
-
+      const {
+        params: { id },
+      } = req;
+      const cs = new CourseService({ id });
+      const result = await cs.process({ type: "getOne" });
+      response({ error: false, message: result, res, status: 200 });
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
-)
+);
 
+Course.route("/course/faculty/:id").get(
+  validatorCompiler(idSchema, "params"),
+  async (
+    req: CustomRequest,
+    res: CustomResponse,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const {
+        params: { id },
+      } = req;
+      const cs = new CourseService({ id });
+      const result = await cs.process({ type: "getByFaculty" });
+      response({ error: false, message: result, res, status: 200 });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-  export {Course}
+export { Course };

@@ -15,6 +15,7 @@ interface Section {
 interface CourseDBO {
   code: String;
   career: String;
+  faculty:String;
   name: String;
   sections: Array<Section>;
   createdAt: Date;
