@@ -2,6 +2,8 @@ import express from 'express'
 import mongoose from 'mongoose'
 import cors from 'cors'
 import passport from 'passport'
+import { COOKIE_KEY } from 'utils/secret'
+import cookieSession from 'cookie-session'
 import './config/passport'
 import pino, { HttpLogger } from 'express-pino-logger'
 
@@ -31,7 +33,14 @@ class Server {
     this.#app.use(cors())
     this.#app.use(express.json())
     this.#app.use(express.urlencoded({ extended: false }))
+    this.#app.use(
+      cookieSession({
+        maxAge: 24 * 60 * 60 * 1000,
+        keys: [COOKIE_KEY]
+      })
+    )
     this.#app.use(passport.initialize());
+    this.#app.use(passport.session());
     this.#app.use(
       (
         req: express.Request,
