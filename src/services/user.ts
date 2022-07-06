@@ -1,5 +1,5 @@
 import httpErrors from 'http-errors'
-
+import bcrypt from 'bcrypt'
 import { store, remove, get, update, verifyCredentials} from 'database'
 import { UserDTO } from 'schemas'
 import { EFU, MFU, GE, errorHandling, UCE } from './utils'
@@ -146,12 +146,15 @@ class UserService {
       if(password === '')
         throw new httpErrors.UnprocessableEntity(UCE.PASSWORD_MISSING)
       
-      const user = await verifyCredentials(email, password) as UserDTO || null
-
-      console.log(user)
+      const user = await verifyCredentials(email) as UserDTO || null
 
       if ( !user ) 
-        throw new httpErrors.UnprocessableEntity(UCE.WRONG_CREDENTIALS)
+        throw new httpErrors.UnprocessableEntity(UCE.EMAIL_UNREGISTERED)
+
+      const pwVerification = await bcrypt.compare(password, user.password)
+
+      if ( !pwVerification )
+        throw new httpErrors.UnprocessableEntity(UCE.WRONG_PW)
 
       return user
 

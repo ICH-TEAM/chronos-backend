@@ -12,6 +12,8 @@ enum UserCredentialsError {
   CREDENTIALS_NOT_SENT = 'There is no email or password',
   EMAIL_MISSING = 'There is no email',
   PASSWORD_MISSING = 'There is no password',
+  EMAIL_UNREGISTERED = 'The email is not registered',
+  WRONG_PW = 'The password is incorrect',
   WRONG_CREDENTIALS = 'The email or password is wrong'
 }
 

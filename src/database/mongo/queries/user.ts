@@ -1,5 +1,4 @@
 import { Document, Types } from 'mongoose'
-
 import { UserModel } from '..'
 import { UserDTO } from 'schemas'
 import { errorHandling, GE } from 'services/utils'
@@ -53,7 +52,6 @@ const get = async (
 
 const verifyCredentials = async (
   email: string | null = null,
-  password: string | null = null
 ): Promise<UserDTO | null> =>{
   try {
     const user = await UserModel.findOne({ "email" : email})
