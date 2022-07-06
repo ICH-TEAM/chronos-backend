@@ -7,7 +7,13 @@ const CourseSchema=new Schema<CourseDBO>({
     },
     career:{
         required:true,
-        type:String
+        type:Schema.Types.ObjectId,
+        ref:"careers"
+    },
+    faculty:{
+      required:true,
+      type:Schema.Types.ObjectId,
+      ref:"faculty"
     },
     name:{
         required:true,
