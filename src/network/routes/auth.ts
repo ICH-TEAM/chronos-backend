@@ -17,8 +17,6 @@ Auth.route('/google/redirect')
         res.redirect('/api/users')
     })
 
-Auth.route('/register')
-
 Auth.route('/login')
     .post(
         validatorCompiler(loginUserSchema, 'body'), 

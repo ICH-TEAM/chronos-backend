@@ -6,4 +6,7 @@ interface UserDBO {
   lastName: string
   createdAt: Date
   updatedAt: Date
+  faculty: string
+  career: string
+  courses: Array<string>
 }

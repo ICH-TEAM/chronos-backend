@@ -22,7 +22,7 @@ class UserService {
     this.#args = args
   }
 
-  public process({ type }: Process): Promise<string | UserDTO | UserDTO[]> {
+  public process({ type }: Process): Promise<string | UserDTO | UserDTO[] | object> {
     switch (type) {
       case 'store':
         return this.#store()
@@ -47,6 +47,13 @@ class UserService {
     try {
       if (!this.#args.userDtoWithoutId)
         throw new httpErrors.UnprocessableEntity(GE.INTERNAL_SERVER_ERROR)
+      
+      const hashedPW = await bcrypt.hash(this.#args.userDtoWithoutId.password, 10)
+
+      this.#args.userDtoWithoutId = {
+        ...this.#args.userDtoWithoutId, 
+        password: hashedPW
+      }
 
       const result = await store({
         ...this.#args.userDtoWithoutId
@@ -130,7 +137,7 @@ class UserService {
     }
   }
 
-  async #login(): Promise<UserDTO | string> {
+  async #login(): Promise<object | string > {
     try {
       if (!this.#args.userCredentials)
         throw new httpErrors.UnprocessableEntity(GE.INTERNAL_SERVER_ERROR)
@@ -156,7 +163,19 @@ class UserService {
       if ( !pwVerification )
         throw new httpErrors.UnprocessableEntity(UCE.WRONG_PW)
 
-      return user
+      const newUser = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        lastName: user.lastName,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        faculty: user.faculty,
+        career: user.career,
+        courses: user.courses
+      }
+
+      return newUser
 
     } catch (e) {
       return errorHandling(e, GE.INTERNAL_SERVER_ERROR)
