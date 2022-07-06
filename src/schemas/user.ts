@@ -9,10 +9,19 @@ const user = Type.Object({
 
 type User = Static<typeof user>
 
+const userCredentials = Type.Object({
+  email: Type.String(),
+  password: Type.String()
+})
+
+type UserCredentials = Static<typeof userCredentials>
+
 const userDto = Type.Object({
   id: Type.Optional(id),
   lastName: Type.String(),
   name: Type.String(),
+  email: Type.String(),
+  password: Type.String(),
   createdAt: Type.Optional(Type.String()),
   updatedAt: Type.Optional(Type.String())
 })
@@ -25,4 +34,10 @@ const storeUserSchema = Type.Object({
 
 type StoreUser = Static<typeof storeUserSchema>
 
-export { userDto, UserDTO, user, User, storeUserSchema, StoreUser }
+const loginUserSchema = Type.Object({
+  args: userCredentials
+})
+
+type LoginUser = Static<typeof loginUserSchema>
+
+export { userDto, UserDTO, user, User, storeUserSchema, StoreUser, userCredentials, UserCredentials, loginUserSchema, LoginUser }

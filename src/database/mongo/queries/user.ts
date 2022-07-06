@@ -1,7 +1,7 @@
 import { Document, Types } from 'mongoose'
-
 import { UserModel } from '..'
 import { UserDTO } from 'schemas'
+import { errorHandling, GE } from 'services/utils'
 
 const userDBOtoDTO = (
   userDBO: Document<unknown, unknown, UserDBO> &
@@ -50,6 +50,18 @@ const get = async (
   return users.map(u => userDBOtoDTO(u))
 }
 
+const verifyCredentials = async (
+  email: string | null = null,
+): Promise<UserDTO | null> =>{
+  try {
+    const user = await UserModel.findOne({ "email" : email})
+
+    return user ? userDBOtoDTO(user) : null
+  } catch (error) {
+    return errorHandling(error, GE.INTERNAL_SERVER_ERROR)
+  }
+}
+
 const update = async (userData: UserDTO): Promise<UserDTO | null> => {
   const { id, ...rest } = userData
   const user = await UserModel.findByIdAndUpdate(id, rest, { new: true })
@@ -57,4 +69,4 @@ const update = async (userData: UserDTO): Promise<UserDTO | null> => {
   return user ? userDBOtoDTO(user) : null
 }
 
-export { store, remove, get, update }
+export { store, remove, get, update , verifyCredentials}

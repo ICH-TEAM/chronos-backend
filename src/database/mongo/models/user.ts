@@ -9,6 +9,14 @@ const UserSchema = new Schema<UserDBO>(
     name: {
       required: true,
       type: String
+    },
+    email: {
+      required: true,
+      type: String
+    },
+    password: {
+      require: true,
+      type: String
     }
   },
   {

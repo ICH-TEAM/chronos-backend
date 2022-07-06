@@ -1,17 +1,18 @@
 import httpErrors from 'http-errors'
-
-import { store, remove, get, update } from 'database'
+import bcrypt from 'bcrypt'
+import { store, remove, get, update, verifyCredentials} from 'database'
 import { UserDTO } from 'schemas'
-import { EFU, MFU, GE, errorHandling } from './utils'
+import { EFU, MFU, GE, errorHandling, UCE } from './utils'
 
 type Process = {
-  type: 'store' | 'getAll' | 'deleteAll' | 'getOne' | 'update' | 'delete'
+  type: 'store' | 'getAll' | 'deleteAll' | 'getOne' | 'update' | 'delete' | 'login'
 }
 
 type Arguments = {
   id?: string
   userDto?: UserDTO
   userDtoWithoutId?: Omit<UserDTO, 'id'>
+  userCredentials?: Pick<UserDTO, 'email' | 'password'>
 }
 
 class UserService {
@@ -35,6 +36,8 @@ class UserService {
         return this.#update()
       case 'delete':
         return this.#delete()
+      case 'login':
+        return this.#login()
       default:
         throw new httpErrors.InternalServerError(GE.INTERNAL_SERVER_ERROR)
     }
@@ -122,6 +125,39 @@ class UserService {
       if (!deletedUser) throw new httpErrors.NotFound(EFU.NOT_FOUND)
 
       return MFU.USER_DELETED
+    } catch (e) {
+      return errorHandling(e, GE.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async #login(): Promise<UserDTO | string> {
+    try {
+      if (!this.#args.userCredentials)
+        throw new httpErrors.UnprocessableEntity(GE.INTERNAL_SERVER_ERROR)
+
+      const { email, password } = this.#args.userCredentials
+
+      if(email === '' && password === '')
+        throw new httpErrors.UnprocessableEntity(UCE.CREDENTIALS_NOT_SENT)
+
+      if(email === '')
+        throw new httpErrors.UnprocessableEntity(UCE.EMAIL_MISSING)
+
+      if(password === '')
+        throw new httpErrors.UnprocessableEntity(UCE.PASSWORD_MISSING)
+      
+      const user = await verifyCredentials(email) as UserDTO || null
+
+      if ( !user ) 
+        throw new httpErrors.UnprocessableEntity(UCE.EMAIL_UNREGISTERED)
+
+      const pwVerification = await bcrypt.compare(password, user.password)
+
+      if ( !pwVerification )
+        throw new httpErrors.UnprocessableEntity(UCE.WRONG_PW)
+
+      return user
+
     } catch (e) {
       return errorHandling(e, GE.INTERNAL_SERVER_ERROR)
     }
