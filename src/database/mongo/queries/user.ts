@@ -1,72 +1,77 @@
-import { Document, Types } from 'mongoose'
-import { UserModel } from '..'
-import { UserDTO } from 'schemas'
-import { errorHandling, GE } from 'services/utils'
+import { Document, Types } from "mongoose";
+import { UserModel } from "..";
+import { UserDTO } from "schemas";
+import { errorHandling, GE } from "services/utils";
 
 const userDBOtoDTO = (
   userDBO: Document<unknown, unknown, UserDBO> &
     UserDBO & {
-      _id: Types.ObjectId
+      _id: Types.ObjectId;
     }
 ): UserDTO => ({
   ...userDBO.toObject(),
-  createdAt: userDBO.createdAt.toISOString(),
-  updatedAt: userDBO.updatedAt.toISOString()
-})
+  // createdAt: userDBO.createdAt.toISOString(),
+  // updatedAt: userDBO.updatedAt.toISOString(),
+});
 
 const store = async (userData: UserDTO): Promise<UserDTO> => {
-  const user = new UserModel(userData)
+  const user = new UserModel(userData);
 
-  await user.save()
+  await user.save();
 
-  return userDBOtoDTO(user)
-}
+  return userDBOtoDTO(user);
+};
 
 const remove = async (
   id: string | null = null
 ): Promise<UserDTO | number | null> => {
   if (id) {
-    const removedUser = await UserModel.findByIdAndRemove(id)
+    const removedUser = await UserModel.findByIdAndRemove(id);
 
-    if (!removedUser) return null
+    if (!removedUser) return null;
 
-    return userDBOtoDTO(removedUser)
+    return userDBOtoDTO(removedUser);
   }
 
-  return (await UserModel.deleteMany({})).deletedCount
-}
+  return (await UserModel.deleteMany({})).deletedCount;
+};
 
 const get = async (
   id: string | null = null
 ): Promise<UserDTO[] | UserDTO | null> => {
   if (id) {
     const user = await UserModel.findById(id)
+      .select(["-password", "-faculty", "-career"])
+      .populate("courses", ["id", "name", "code"]);
 
-    return user ? userDBOtoDTO(user) : null
+    return user ? userDBOtoDTO(user) : null;
   }
 
-  const users = await UserModel.find({})
+  const users = await UserModel.find({});
 
-  return users.map(u => userDBOtoDTO(u))
-}
+  return users.map((u) => userDBOtoDTO(u));
+};
 
 const verifyCredentials = async (
-  email: string | null = null,
-): Promise<UserDTO | null> =>{
+  email: string | null = null
+): Promise<UserDTO | null> => {
   try {
-    const user = await UserModel.findOne({ "email" : email})
+    const user = await UserModel.findOne({ email: email })
+      .select(["-createdAt", "-updatedAt"])
+      .populate("faculty", ["name"])
+      .populate("career", ["name"]);
 
-    return user ? userDBOtoDTO(user) : null
+    return user ? userDBOtoDTO(user) : null;
   } catch (error) {
-    return errorHandling(error, GE.INTERNAL_SERVER_ERROR)
+    return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
   }
-}
+};
 
 const update = async (userData: UserDTO): Promise<UserDTO | null> => {
-  const { id, ...rest } = userData
-  const user = await UserModel.findByIdAndUpdate(id, rest, { new: true })
+  const { id, ...rest } = userData;
+  const user = await UserModel.findByIdAndUpdate(id, rest, { new: true });
 
-  return user ? userDBOtoDTO(user) : null
-}
+  return user ? userDBOtoDTO(user) : null;
+};
 
-export { store, remove, get, update , verifyCredentials}
+export { store, remove, get, update, verifyCredentials };
