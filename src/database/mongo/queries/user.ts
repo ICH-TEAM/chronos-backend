@@ -59,7 +59,8 @@ const verifyCredentials = async (
     const user = await UserModel.findOne({ email: email })
       .select(["-createdAt", "-updatedAt"])
       .populate("faculty", ["name"])
-      .populate("career", ["name"]);
+      .populate("career", ["name"])
+      .populate("courses", ["code", "name"]);
 
     return user ? userDBOtoDTO(user) : null;
   } catch (error) {
