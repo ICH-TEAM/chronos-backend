@@ -1,51 +1,54 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema } from "mongoose";
 
 const UserSchema = new Schema<UserDBO>(
   {
     lastName: {
       required: true,
-      type: String
+      type: String,
     },
     name: {
       required: true,
-      type: String
+      type: String,
     },
     email: {
       required: true,
-      type: String
+      type: String,
+      unique: true,
     },
     password: {
       require: true,
-      type: String
+      type: String,
     },
     faculty: {
       require: true,
       type: Schema.Types.ObjectId,
-      ref: "faculty"
+      ref: "faculty",
     },
     career: {
       require: true,
       type: Schema.Types.ObjectId,
-      ref: "careers"
+      ref: "careers",
     },
-    courses: [{
-      require: true,
-      type: Schema.Types.ObjectId,
-      ref: "courses"
-    }]
+    courses: [
+      {
+        require: true,
+        type: Schema.Types.ObjectId,
+        ref: "courses",
+      },
+    ],
   },
   {
     timestamps: true,
     versionKey: false,
     toObject: {
       transform: (_, ret) => {
-        ret.id = ret._id.toString()
-        delete ret._id
-      }
-    }
+        ret.id = ret._id.toString();
+        delete ret._id;
+      },
+    },
   }
-)
+);
 
-const UserModel = model<UserDBO>('users', UserSchema)
+const UserModel = model<UserDBO>("users", UserSchema);
 
-export { UserModel }
+export { UserModel };

@@ -15,11 +15,14 @@ const userDBOtoDTO = (
 });
 
 const store = async (userData: UserDTO): Promise<UserDTO> => {
-  const user = new UserModel(userData);
+  const user = (await (await new UserModel(userData)
+    .populate("faculty", ["name"]))
+    .populate("career", ["name"]))
+    .populate("courses", ["code", "name"]);
 
-  await user.save();
+  await (await user).save();
 
-  return userDBOtoDTO(user);
+  return userDBOtoDTO(await user);
 };
 
 const remove = async (
@@ -32,7 +35,6 @@ const remove = async (
 
     return userDBOtoDTO(removedUser);
   }
-
   return (await UserModel.deleteMany({})).deletedCount;
 };
 
