@@ -6,8 +6,8 @@ const courseDBOtoDTO = (
   courseDBO: Document<unknown, CourseDBO> & CourseDBO & { _id: Types.ObjectId }
 ): CourseDTO => ({
   ...courseDBO.toObject(),
-  createdAt: courseDBO.createdAt.toISOString(),
-  updatedAt: courseDBO.updatedAt.toISOString(),
+  // createdAt: courseDBO.createdAt.toISOString(),
+  // updatedAt: courseDBO.updatedAt.toISOString(),
 });
 
 const storeCourse = async (courseData: Course): Promise<Course> => {
@@ -30,7 +30,13 @@ const getCourse = async (
 const getCousesByFaculty = async (
   facultyID: string
 ): Promise<CourseDTO[] | CourseDTO | null> => {
-  const courses = await CourseModel.find({ faculty: facultyID });
+  const courses = await CourseModel.find({ faculty: facultyID }).select([
+    "-career",
+    "-faculty",
+    "-sections",
+    "-createdAt",
+    "-updatedAt",
+  ]);
   return courses.map((c) => courseDBOtoDTO(c));
 };
 
